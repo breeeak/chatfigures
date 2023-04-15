@@ -147,6 +147,15 @@ If you have any questions, please contact me by email: [shuomeng2-c@my.cityu.edu
 
 This project will be continuously updated at least until my graduation. If you are interested in this project, you can also join me.
 
+# Donate
+If you like this project, you can buy me a cup of coffee to cover the cost of the server. :coffee:
+
+Thank you!
+
+| <img width="200" src=".github/images/bmc_qr.png" > | <img width="200" src=".github/images/wechatpay.jpg"> | <img width="200" src=".github/images/alipay.jpg"> |
+| :-------------------------------------------------: | :-------------------------------------------------: | :-----------------------------------------------: |
+| buymeacoffee | wechatpay | alipay | 
+
 # License
 This project is released under the [Apache 2.0 license](.github/LICENSE).
 
