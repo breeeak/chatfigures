@@ -1,0 +1,120 @@
+version: "3"
+services:
+# 如果在docker中启动前端 打开下面注释
+#   cf-frontend:
+#     container_name: cf-frontend
+#     ports:
+#       - "80:80"
+#     build:
+#       context: ./
+#       dockerfile: ./docker/frontend/Dockerfile
+#     environment:
+#       TZ: Asia/Shanghai
+#     volumes:
+#       - ./docker/frontend/nginx/my.conf:/etc/nginx/conf.d/default.conf
+#       - ./docker/frontend/nginx/cert/:/etc/nginx/cert/
+#       - ./cf-frontend/dist/:/usr/share/nginx/html/
+#     expose:
+#       - "80"
+#     networks:
+#       network:
+#         ipv4_address: 177.8.0.11
+
+
+  cf-backend:
+    build:
+      context: ./
+      dockerfile: ./docker/backend/Dockerfile
+    container_name: cf-backend
+    # working_dir: /cf-backend-container
+# 只有第一次启动时，需要打开此选项，以初始化数据库 否则原有数据会被清空
+#    command: >
+#      sh -c   "python manage.py makemigrations &&
+#              python manage.py migrate &&
+#              python manage.py init_db"
+# 打开mysql 时，打开此选项
+    depends_on:
+      - cf-db
+      - cf-redis
+    environment:
+      PYTHONUNBUFFERED: 1
+      DATABASE_HOST: cf-db
+      DJANGO_SETTINGS_MODULE: apiproject.settings
+      TZ: Asia/Shanghai
+    volumes:
+      - ./cf-backend/:/cf-backend-container/
+      - ./volumes/logs/log/:/var/log/
+    ports:
+      - "8000:8000"
+    expose:
+      - "8000"
+    restart: always
+    networks:
+      network:
+        ipv4_address: 177.8.0.12      # 固定IP 用于容器间通信
+
+  cf-db:
+    image: mysql:8.0
+    container_name: cf-db
+    #使用该参数，container内的root拥有真正的root权限，否则，container内的root只是外部的一个普通用户权限
+    #设置为true，不然数据卷可能挂载不了，启动不起
+    privileged: true
+    restart: always
+    ports:
+      - "3309:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: "chatfigures2234"
+      MYSQL_DATABASE: "apiproject_db"
+      TZ: Asia/Shanghai
+    command:
+      --wait_timeout=31536000
+      --interactive_timeout=31536000
+      --max_connections=1000
+      --default-authentication-plugin=mysql_native_password
+    volumes:
+      - "./volumes/mysql/data/:/var/lib/mysql/"
+      - "./volumes/mysql/conf.d/:/etc/mysql/conf.d/"
+      - "./volumes/mysql/logs/:/logs/"
+    networks:
+      network:
+        ipv4_address: 177.8.0.13
+
+  cf-redis:
+      restart: unless-stopped
+      image: redis:7.0.5-alpine
+      container_name: cf-redis
+      ports:
+        - "6378:6379"
+      networks:
+        network:
+          ipv4_address: 177.8.0.14
+# 如果使用celery 插件，请自行打开此注释
+#  cf-celery:
+#    build:
+#      context: .
+#      dockerfile: ./docker/backend/celery/Dockerfile
+#    # image: django:2.2
+#    container_name: fvadmin-celery
+#    working_dir: /cf-backend-container
+#    depends_on:
+#      - cf-db
+#      - redis
+#    environment:
+#      PYTHONUNBUFFERED: 1
+#      DATABASE_HOST: apiproject
+#      TZ: Asia/Shanghai
+#    volumes:
+#      - ./volumes/backend:/cf-backend-container
+#      - ./volumes/logs/log:/var/log
+#    restart: always
+#    networks:
+#      network:
+#        ipv4_address: 177.8.0.14
+
+networks:
+  network:
+    ipam:
+      driver: default
+      config:
+        - subnet: '177.8.0.0/16'
+
