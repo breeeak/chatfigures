@@ -1,25 +1,24 @@
 version: "3"
 services:
 # 如果在docker中启动前端 打开下面注释
-#   cf-frontend:
-#     container_name: cf-frontend
-#     ports:
-#       - "80:80"
-#     build:
-#       context: ./
-#       dockerfile: ./docker/frontend/Dockerfile
-#     environment:
-#       TZ: Asia/Shanghai
-#     volumes:
-#       - ./docker/frontend/nginx/my.conf:/etc/nginx/conf.d/default.conf
-#       - ./docker/frontend/nginx/cert/:/etc/nginx/cert/
-#       - ./cf-frontend/dist/:/usr/share/nginx/html/
-#     expose:
-#       - "80"
-#     networks:
-#       network:
-#         ipv4_address: 177.8.0.11
-
+  cf-frontend:
+   container_name: cf-frontend
+   ports:
+     - "80:80"
+   build:
+     context: ./
+     dockerfile: ./docker/frontend/Dockerfile
+   environment:
+     TZ: Asia/Shanghai
+   volumes:
+     - ./docker/frontend/nginx/my.conf:/etc/nginx/conf.d/default.conf
+     - ./docker/frontend/nginx/cert/:/etc/nginx/cert/
+     - ./cf-frontend/dist/:/usr/share/nginx/html/
+   expose:
+     - "80"
+   networks:
+     network:
+       ipv4_address: 177.8.0.11
 
   cf-backend:
     build:

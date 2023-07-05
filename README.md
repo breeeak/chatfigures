@@ -3,8 +3,6 @@
     <a align="center" href="https://www.chatfigures.com" target="_blank">
       <img src=".github/images/chat-figures-logo.png">
     </a>
-
-[//]: # (English | [简体中文]&#40;.github/README_CN.md&#41;)
 </div>
 
 # Introduction
@@ -16,8 +14,12 @@ At present, the project mainly includes the following functions:
 You can try the online demo at [https://www.chatfigures.com](https://www.chatfigures.com).
 
 # Features
-Chat Figures utilizes **Django** as the backend framework, and **Vue3** as the front-end framework. The deep learning models are most based on **openmmlab**. 
+Chat Figures utilizes **Django** as the backend framework, and **Vue3** as the front-end framework. The deep learning models are most based on **ultralytics**.
+if you want to try two-stage model, you can use **openmmlab**. 
 ChatGPT API is also adopted in this project (under development).
+
+# Dataset
+For the dataset, please refer to [dataset](./datasets/readme.md)
 
 # Requirements
 - Python 3.7+
@@ -38,7 +40,7 @@ git clone https://github.com/breeeak/chatfigures.git
 cd chatfigures
 ```
 
-## Docker
+## Docker(Recommended)
 We provide a docker-compose file to build the project. Ensure that your docker version >=19.03.
 ```bash
 docker-compose up -d
@@ -49,7 +51,7 @@ The project is mainly divided into four parts: algorithm environment, backend, f
 You can follow the instructions below to install in your own environment. (Note: The following instructions are successful on Ubuntu 18.04.5 LTS)
 ### Algorithm Environment
 
-The project mainly based on [pytroch](https://pytorch.org/) and [openmmlab](https://github.com/open-mmlab/mmdetection). You can refer to the official instructions. 
+The project mainly based on [pytroch](https://pytorch.org/) and [ultralytics](https://ultralytics.com/yolov8). You can refer to the official instructions. 
 
 Below is a simple example of installing the environment using conda.
 
@@ -60,13 +62,16 @@ conda create --name chatfigures python=3.8 -y
 conda activate chatfigures
 # Install PyTorch following official instructions eg.
 conda install pytorch torchvision -c pytorch
-# Install mmegnie mmcv mmdet mmocr mmyolo
-pip install openmim \
-    && mim install "mmengine>=0.6.0" \
-    && mim install "mmcv>=2.0.0rc4,<2.1.0" \
-    && mim install "mmdet>=3.0.0rc6,<3.1.0" \
-    && mim install "mmocr>=1.0.0rc0" \
-    && mim install "mmyolo"
+# Install mmegnie mmcv mmdet mmocr mmyolo if you want to use two-stage model.
+#pip install openmim \
+#    && mim install "mmengine>=0.6.0" \
+#    && mim install "mmcv>=2.0.0rc4,<2.1.0" \
+#    && mim install "mmdet>=3.0.0rc6,<3.1.0" \
+#    && mim install "mmocr>=1.0.0rc0" \
+#    && mim install "mmyolo"
+cd /cf-backend/apps/figures/recognizers/ultralytics
+RUN pip install -e .
+
 ```
 ### Backend
 The front-end project is mainly based on Django4 + djangorestframework.
@@ -138,7 +143,7 @@ You can upload an image in base64 format to do the compound figure separation.
 
 
 # Citation
-The relevant papers are under review. You can also refer to this project.
+The relevant paper is under review. You can also refer to this project.
 
 # Contact
 At present, this project is almost maintained by myself and Copilot :laughing: . I know the project has a lot of problems, and there are many places that need to be improved.

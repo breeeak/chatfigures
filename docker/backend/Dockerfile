@@ -16,15 +16,21 @@ RUN pip install -r requirements.txt \
     && rm -rf /root/.cache/pip
 
 RUN pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
-RUN pip install openmim \
-    && mim install "mmengine>=0.6.0" \
-    && mim install "mmcv>=2.0.0rc4,<2.1.0" \
-    && mim install "mmdet>=3.0.0rc6,<3.1.0" \
-    && mim install "mmocr>=1.0.0rc0" \
-    && mim install "mmyolo" \
-    && rm -rf /root/.cache/pip
+# if you want to try mmlab models, you can uncomment the following lines
+#RUN pip install openmim \
+#    && mim install "mmengine>=0.6.0" \
+#    && mim install "mmcv>=2.0.0rc4,<2.1.0" \
+#    && mim install "mmdet>=3.0.0rc6,<3.1.0" \
+#    && mim install "mmocr>=1.0.0rc0" \
+#    && mim install "mmyolo" \
+#    && rm -rf /root/.cache/pip
 
 COPY ./cf-backend/ .
+# install yolo_ocr
+WORKDIR /cf-backend-container/apps/figures/recognizers/ultralytics
+RUN pip install --no-cache -e .
+
+WORKDIR /cf-backend-container
 RUN awk 'BEGIN { cmd="cp -i ./conf/env.example.py   ./conf/env.py "; print "n" |cmd; }'
 CMD ["daphne","-b","0.0.0.0","-p","8000","apiproject.asgi:application"]
 

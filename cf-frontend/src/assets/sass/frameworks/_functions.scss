@@ -1,0 +1,176 @@
+//
+// Get Mode
+//
+
+@function getMode() {
+  @if (variable-exists(mode)) {
+    @return $mode;
+  } @else {
+    @return default;
+  }
+}
+
+@function isDarkMode() {
+  @if (getMode() == dark) {
+    @return true;
+  } @else {
+    @return false;
+  }
+}
+
+@function isDefaultMode() {
+  @if (getMode() == default) {
+    @return true;
+  } @else {
+    @return false;
+  }
+}
+
+//
+// Get
+//
+
+@function get($map, $keys...) {
+  @if length($keys) == 1 {
+    $keys: nth($keys, 1);
+  }
+
+  @if type-of($map) != 'map' or $map == null {
+    //@return false;
+  }
+
+  $warn: "#{nth($keys, 1)}";
+  $length: length($keys);
+  $get: map-get($map, nth($keys, 1));
+
+  @if $length > 1 {
+    @for $i from 2 through $length {
+      @if $get != null and type-of($get) == 'map' {
+        $warn: $warn + "->#{nth($keys, $i)}";
+        $get: map-get($get, nth($keys, $i));
+
+        @if $get == null {
+          @return null;
+        }
+      }
+      @else {
+        @return get-warning($warn, $get, nth($keys, $i));
+      }
+    }
+  }
+
+  @return $get;
+}
+
+@function has($map, $keys...) {
+  @if length($keys) == 1 {
+    $keys: nth($keys, 1);
+  }
+
+  @if type-of($map) != 'map' or $map == null {
+    //@return false;
+  }
+
+  $warn: "#{nth($keys, 1)}";
+  $length: length($keys);
+  $get: map-get($map, nth($keys, 1));
+
+  @if $length > 1 {
+    @for $i from 2 through $length {
+      @if $get != null and type-of($get) == 'map' {
+        $warn: $warn + "->#{nth($keys, $i)}";
+        $get: map-get($get, nth($keys, $i));
+
+        @if $get == null {
+          @return false;
+        }
+      }
+      @else {
+        @return false;
+      }
+    }
+  }
+
+  @if $get != null {
+    @return true;
+  }
+  @else {
+    @return false;
+  }
+}
+
+@function get-warning($warn, $get, $key) {
+  @if $get == null {
+    @warn "Map has no value for key search `#{$warn}`";
+  }
+  @else if type-of($get) != 'map' {
+    @warn "Non-map value found for key search `#{$warn}`, cannot search for key `#{$key}`";
+  }
+  @return null;
+}
+
+
+//
+// Bootstrap extended functions
+//
+
+@function theme-inverse-color($key: "primary") {
+  @return get($theme-inverse-colors, $key);
+}
+
+@function theme-active-color($key: "primary") {
+  @return get($theme-active-colors, $key);
+}
+
+@function theme-light-color($key: "primary") {
+  @return get($theme-light-colors, $key);
+}
+
+//
+// valueif
+//
+
+@function valueif($check, $trueValue, $falseValue: null) {
+  @if $check {
+    @return $trueValue;
+  } @else if $falseValue != null {
+    @return $falseValue;
+  } @else {
+    @return null;
+  }
+}
+
+
+//
+// SVG Icon
+//
+
+@mixin svg-icon-color($color, $important: false) {
+  svg {
+    [fill]:not(.permanent):not(g) {
+      transition: fill 0.3s ease;
+      fill: $color valueif($important, !important, null);
+    }
+
+    &:hover {
+      [fill]:not(.permanent):not(g) {
+        transition: fill 0.3s ease;
+      }
+    }
+  }
+}
+
+@mixin svg-icon-transition() {
+  svg {
+    [fill]:not(g) {
+      transition: fill 0.3s ease;
+    }
+  }
+}
+
+@mixin svg-icon-size($size, $important: false) {
+  svg {
+    height: $size valueif($important, !important, null);
+    width: $size valueif($important, !important, null);
+  }
+}
