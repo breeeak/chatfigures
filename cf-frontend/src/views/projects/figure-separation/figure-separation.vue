@@ -65,6 +65,10 @@
                 You are responsible for the image you upload and we will never share your images with anyone else. Learn
                 more about our
                 <a href="/privacy-policy.html">Privacy Policy</a> & <a href="/terms-conditions.html">User terms</a>
+                  <br>
+                  <p>
+                      If you find the response time is too long, the reason may be that the server is not powerful enough. It is just 1 core (2.1GHz) 2G memory 2M bandwidth without GPU.
+                  </p>
               </div>
             </div>
           </div>

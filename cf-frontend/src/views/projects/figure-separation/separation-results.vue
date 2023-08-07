@@ -24,7 +24,8 @@
           </DTree>
         </div>
 
-        <div class="d-flex flex-column justify-content-end w-100" style="height: 25%">
+        <div class="d-flex flex-column justify-content-end w-100 text-center" style="height: 25%">
+          <router-link :to="{ name: 'separation-guidelines'}" class="fw-bolder link-primary mb-3">User Guidelines</router-link>
           <!--重新计算关系-->
           <button @click="calcAllRelations" class="btn btn-sm btn-primary w-100 text-white mb-2" type="button">
             Calculate Label Relations
@@ -134,7 +135,6 @@
       </div>
     </div>
   </div>
-
   <!--  弹窗 修改绘制内容 TODO-->
   <draw-option-modal id="drawOption" :isLabelVue="true" @setDrawOptions="getDrawOptions"/>
 </template>
@@ -170,9 +170,6 @@ import 'driver.js/dist/driver.min.css';
 import {Draggable as DTree} from '@he-tree/vue'
 import '@he-tree/vue/style/default.css'
 import {getFigureSeparationResults,getFigureSeparationList} from "@/api/projects/figure-separation";
-import {getToken} from "@/core/services/JwtService";
-
-
 
 const maxId = ref(0); // 最大id
 const imgIndex = ref(0);// 当前图片索引 暂时没有用上

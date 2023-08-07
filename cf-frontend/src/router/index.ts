@@ -49,17 +49,29 @@ const router = createRouter({
                     path: "figure-separation",
                     name: "figure-separation",
                     component: () =>
-                        import("@/views/projects//figure-separation/figure-separation.vue"),
-
+                        import("@/views/projects/figure-separation/figure-separation.vue"),
                 },
                 {
                     path: "separation-results/:resultId",
                     name: "separation-results",
                     component: () =>
-                        import("@/views/projects//figure-separation/separation-results.vue"),
+                        import("@/views/projects/figure-separation/separation-results.vue"),
+                },
+                {
+                    path: "figure-separation/user-guidelines",
+                    name: "separation-guidelines",
+                    component: () =>
+                        import("@/views/projects/figure-separation/user-guidelines.vue"),
+                },
+                {
+                    path: "figure-separation/extension-instructions",
+                    name: "separation-instructions",
+                    component: () =>
+                        import("@/views/projects/figure-separation/extension-instructions.vue"),
                 }
             ],
         },
+
         {
             path: '/:pathMatch(.*)*',    // 全局404 跳转到首页 放到最后
             name:"not-found",

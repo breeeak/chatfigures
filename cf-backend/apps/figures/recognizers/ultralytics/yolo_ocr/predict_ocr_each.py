@@ -11,7 +11,7 @@ import numpy as np
 from ultralytics.yolo.utils.metrics import calc_batch_iou
 from tqdm import tqdm
 from .ocr_model.utils import CTCLabelConverter
-from .ocr_model.model import Model
+from .ocr_model.model import Model, Options
 import torch
 from PIL import Image
 import math
@@ -225,8 +225,12 @@ def load_text_model(text_model_path):
     """
     加载text model
     """
+    opt = Options()
+    opt.PAD = False
+    opt.imgW = 50
+    opt.rgb = True
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    model = Model()
+    model = Model(opt)
     converter = CTCLabelConverter(model.opt.character)
     model = torch.nn.DataParallel(model).to(device)
     model.load_state_dict(torch.load(text_model_path, map_location=device))

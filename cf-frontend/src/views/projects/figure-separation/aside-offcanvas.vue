@@ -9,7 +9,7 @@
 
     <div class="offcanvas-body">
       <!--begin::Wrapper-->
-        <div class="text-center" v-if="separationList.length>1">
+        <div class="text-center" v-if="separationList.length>=1">
           <button @click="exportAll" class="btn btn-sm text-white btn-primary w-100 my-5 " >
             Export All Labels
           </button>

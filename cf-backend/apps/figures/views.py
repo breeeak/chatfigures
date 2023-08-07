@@ -19,6 +19,7 @@ from pathlib import Path
 from apps.fadmin.utils.zip_util import zip_dir
 import base64
 import jwt
+import time
 
 if INFERENCE_TYPE == "onnx":
     from apps.figures.recognizers.onnx_inference import backend_recognize
@@ -32,15 +33,15 @@ elif INFERENCE_TYPE == "yolo_ocr":
 @api_view(['POST'])
 def getNewLabel(request):
     # data_name = "tests"
-    data_name = "stage1"
+    # data_name = "formal"
     # data_name = "generated"
-    # data_name = "clefmed/test"
+    data_name = "formal/yolo_formal"
     # data_name = "clefmed/train"
 
-    label_dir = os.path.join(settings.MEDIA_ROOT, data_name, "data_pred_labels_yolov8_4class2")
-    # label_dir = os.path.join(settings.MEDIA_ROOT, data_name, "jsons")
-    # img_dir = os.path.join(settings.MEDIA_ROOT, data_name, "figures")
-    img_dir = os.path.join(settings.MEDIA_ROOT, data_name, "coco/test")
+    # label_dir = os.path.join(settings.MEDIA_ROOT, data_name, "data_pred_labels_yolov8_4class")
+    label_dir = os.path.join(settings.MEDIA_ROOT, data_name, "eval/yolov8_ocr_predict")
+    img_dir = os.path.join(settings.MEDIA_ROOT, data_name, "images/val")
+    # img_dir = os.path.join(settings.MEDIA_ROOT, data_name, "yolo_formal/images/val")
 
     # 保存当前的结果       不用保存当前， “next”保存并跳到下一个，“last” 上一个，“current" 切换到这一个
     if request.data["save"]:  # 以下是修改了结果后的保存
@@ -93,7 +94,9 @@ def getNewLabel(request):
         results["height"] = img.height
     domain_url = request.build_absolute_uri('/')[:-1].strip("/")  # 得到Django的运行的域名端口
     # results["name"] = os.path.join("media", "images", "tests",results["name"])
-    results["name"] = os.path.join(domain_url, "media", data_name, "figures", img_name)
+
+    # results["name"] = os.path.join(domain_url, "media", data_name, "figures", img_name)
+    results["name"] = os.path.join(domain_url, "media", data_name, "images", "val", img_name)
     request.data["index"] = index
     request.data["results"] = results
     return SuccessResponse(request.data)
@@ -320,6 +323,8 @@ def separate_one(figure_path, scale_dict, separate_dir,  base_url=""):
         out_name = (out_name + figure_path.suffix)
         out_path = out_figure_root / out_name    # 保存的路径
         region.save(out_path)
+        date_time = time.time()
+        out_name = out_name + f"?{date_time}"   # 加上时间戳，防止缓存
         img_obj = {"name": base_url + out_name, "figure_no": figure_no}
         img_objs.append(img_obj)
     return img_objs

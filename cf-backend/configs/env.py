@@ -51,5 +51,5 @@ INTERFACE_PERMISSION = True
 # ================================================= #
 # ************** 模型配置  ************** #
 # ================================================= #
-INFERENCE_TYPE = "yolo_each"     # onnx or mmlab or yolo_each or yolo_ocr
+INFERENCE_TYPE = "yolo_ocr"     # onnx or mmlab or yolo_each or yolo_ocr
 
