@@ -1,5 +1,5 @@
 <template>
-    <nav-bar />
+
     <div class="container">
         <div class="row">
             <div class="col-12 text-center my-5">
@@ -18,38 +18,49 @@
                 <img  class="w-50" src="/static/images/docs/install-chrome.jpg" alt="install-chrome">
             </div>
         </div>
+        <div class="row">
+            <ul>
+                <li><a href="#figure-separation">Figure Separation Guidelines</a></li>
+                <li><a href="#interactive-measurement">Interactive Measurement Guidelines</a></li>
+            </ul>
+        </div>
+        <div class="row" id="figure-separation">
+            <div class="col-12 my-5">
+                <p class="display-6 my-4">Figure Separation Guidelines</p>
+            </div>
+        </div>
         <div class="row d-inline" >
             <h1>Getting Started</h1>
             <p >
                 1. Right-click an image on any website.
             </p>
             <div class="text-center">
-                <img  class="w-50" src="/static/images/docs/1right_click.jpg" alt="install-chrome">
+                <img  class="w-50" src="/static/images/docs/figure-seperation/1right_click.jpg" alt="install-chrome">
             </div>
             <p>
                 2. Select "Chat Figures" and wait a moment. You will see a notification.
             </p>
             <div class="text-center">
-                <img  class="w-50" src="/static/images/docs/2notification.jpg" alt="notification">
+                <img  class="w-50" src="/static/images/docs/figure-seperation/2notification.jpg" alt="notification">
             </div>
             <p>
                 3. Separation results will be shown on a new tab.
             </p>
             <div class="text-center">
-                <img  class="w-50" src="/static/images/docs/3newtab.jpg" alt="3newtab">
+                <img  class="w-50" src="/static/images/docs/figure-seperation/3newtab.jpg" alt="3newtab">
             </div>
             <p>
                 4. You can customize the result, download each sub figure, export json format labels.
             </p>
             <div class="text-center">
-                <img  class="w-50" src="/static/images/docs/4download.jpg" alt="download">
+                <img  class="w-50" src="/static/images/docs/figure-seperation/4download.jpg" alt="download">
             </div>
         </div>
 
         <div class="row d-inline" >
             <h1>Quick Reference</h1>
             <div class="text-center">
-                <img  class="w-75" src="/static/images/docs/references.jpg" alt="install-chrome">
+                <img  class="w-75" src="/static/images/docs/figure-seperation/references.jpg" alt="install-chrome">
             </div>
 
         </div>
@@ -65,11 +76,21 @@
                 3. press "shift + mouse wheel"to zoom in or zoom out viewport
             </p>
         </div>
+        <!--Interactive Measurement-->
+        <div class="row" id="interactive-measurement">
+            <div class="col-12 my-5">
+                <p class="display-6 my-4">Interactive Measurement Guidelines</p>
+            </div>
+        </div>
+        <div class="row d-inline" >
+            <p>
+                Coming Soon ...
+            </p>
+        </div>
     </div>
 </template>
 
 <script setup lang="ts">
-import NavBar from "@/components/layout/nav-bar.vue";
 </script>
 
 <style scoped>

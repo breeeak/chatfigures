@@ -1,4 +1,3 @@
-import {StateEnum} from "@/core/plugins/DrawEditor/overlay";
 // 判断两个矩形是否相交 包含在内部的情况 https://www.yiiven.cn/rect-is-intersection.html
 export const isIntersection = (rectA, rectB) => {
     //rect = [[x1,y1],[x2,y2]] x1 < x2, y1 < y2
@@ -122,11 +121,11 @@ export const measureCircle = (radius, ppm = 0) => {        // ppm为0表示未�
 
 export const measureLine = (point, lastPoint, ppm = 0) => {        // ppm为0表示未知 使用px即可
     const lineLength = Math.round(
-        Math.sqrt(
-            (lastPoint.x - point.x) * (lastPoint.x - point.x) +
-            (lastPoint.y - point.y) * (lastPoint.y - point.y)
-        )
-    );
+            Math.sqrt(
+                (lastPoint.x - point.x) * (lastPoint.x - point.x) +
+                (lastPoint.y - point.y) * (lastPoint.y - point.y)
+            )
+        );
     const {number: actLineLength, unit: actLineUnit} = px2actLength(
         lineLength,
         ppm
@@ -140,13 +139,15 @@ export const measureLine = (point, lastPoint, ppm = 0) => {        // ppm为0表
     return results;
 }
 export const measurePoly = (points, ppm = 0) => {        // ppm为0表示未知 使用px即可
-    const {area, actArea, lineLength, actLineLength, unit} = polygonArea(points, ppm);
+    const {area, actArea, lineLength, actLineLength, unit, diameter, actDiameter} = polygonArea(points, ppm);
 
     const results = {
         ppm,
         lineLength,
         actLineLength,
         actLineUnit: unit,
+        diameter,
+        actDiameter,
 
         area,
         actArea,
@@ -160,7 +161,17 @@ const polygonArea = (points, ppm) => {
     let i, j;
     let area = 0;
     let lineLength = 0;
+    let min_x =  points[0].x;
+    let max_x =  points[0].x;
     for (i = 0; i < points.length; i++) {
+        // 获取最大最小位置
+        if(points[i].x<min_x){
+            min_x = points[i].x
+        }
+        if(points[i].x>max_x){
+            max_x = points[i].x
+        }
+
         j = (i + 1) % points.length;
         area += points[i].x * points[j].y;
         area -= points[i].y * points[j].x;
@@ -175,28 +186,57 @@ const polygonArea = (points, ppm) => {
         }
     }
     area /= 2;
+    const diameter = max_x - min_x;
     const {number: actLineLength, unit: actLineUnit} = px2actLength(
         lineLength,
         ppm
     );
-    const {number: actArea, unit: actAreaUnit} = px2actLength(
-        area,
-        ppm * ppm
-    );  //TODO check 这么算面积对不对
+    const {number: actDiameter, unit: actDiameterUnit} = px2actLength(
+        diameter,
+        ppm
+    );
+
+    // get the actual area unit
+    const actAreaUnit = actLineUnit;
+    const ppunit = meter2unit(ppm, actLineUnit);
+    const actArea = parseFloat(Number(Math.abs(area) /(ppunit*ppunit)).toFixed(2));
+
     return {
         area: Math.round(Math.abs(area)),
         actArea: actArea,
+        actAreaUnit: actAreaUnit,
         lineLength: Math.round(lineLength),
         actLineLength: actLineLength,
+        diameter:Math.round(diameter),
+        actDiameter:actDiameter,
         unit: actLineUnit,
     };
 };
+const meter2unit = (ppmeter, unit) => {
+    // 1m = 100cm = 1000mm = 0.001km = 39.3701in = 1000000um = 1000000000nm
+  if(unit=="cm"){
+    return ppmeter/100
+  }else if(unit=="mm"){
+    return ppmeter/1000
+  }else if(unit=="m"){
+    return ppmeter
+  }else if(unit=="km"){
+    return ppmeter*1000
+  }else if(unit=="um"){
+    return ppmeter/1000000
+  }else if(unit=="nm"){
+    return ppmeter/1000000000
+  }else{
+    return 1
+  }
+}
 
 export const showTextInfo = (results, type, options) => {// 如果options 为false就全部显示  如果想不显示text的应该直接不绘制
     if (!options) {
         options = {
             basics: true,
             perimeters: true,
+            diameter: true,
             areas: true,
             actual: true,
             unit: true
@@ -208,36 +248,45 @@ export const showTextInfo = (results, type, options) => {// 如果options 为fal
     }
     const showTexts = ["", "", ""]
     if (options.basics) {
-        if (type == StateEnum.RECT) {
+        if (type == "rect") {
             if (options.actual) {
-                showTexts[0] = `Width:${results.width}px ${results.actWidth}${results.actWidthUnit}\nHeight:${results.height}px ${results.actHeight}${results.actHeightUnit}`
+                showTexts[0] = `W:${results.width}px ${results.actWidth}${results.actWidthUnit}\nH:${results.height}px ${results.actHeight}${results.actHeightUnit}`
             } else {
-                showTexts[0] = `Width:${results.width}px\nHeight:${results.height}px`
+                showTexts[0] = `W:${results.width}px\nH:${results.height}px`
             }
-        } else if (type == StateEnum.CIRCLE) {
+        } else if (type == "circle") {
             if (options.actual) {
-                showTexts[0] = `Radius:${results.radius}px ${results.actRadius}${results.actRadiusUnit}`
+                showTexts[0] = `R:${results.radius}px ${results.actRadius}${results.actRadiusUnit}`
             } else {
-                showTexts[0] = `Radius:${results.radius}px`
+                showTexts[0] = `R:${results.radius}px`
             }
         }
     }
     if (options.perimeters) {
         if (options.actual) {
-            showTexts[1] = `Perimeter:${results.lineLength}px ${results.actLineLength}${results.actLineUnit}`
+            showTexts[1] = `P:${results.lineLength}px ${results.actLineLength}${results.actLineUnit}`
         } else {
-            showTexts[1] = `Perimeter:${results.lineLength}px`
+            showTexts[1] = `P:${results.lineLength}px`
         }
-        if (type == StateEnum.LINE) {
-            showTexts[1] = showTexts[1].replace("Perimeter:", "")
+        if (type == "line") {
+            showTexts[1] = showTexts[1].replace("P:", "")
         }
     }
     if (options.areas) {
-        if (type != StateEnum.LINE) {
+        if (type != "line") {
             if (options.actual) {
-                showTexts[2] = `Area:${results.area}px² ${results.actArea}${results.actAreaUnit}²`
+                showTexts[2] = `A:${results.area}px² ${results.actArea}${results.actAreaUnit}²`
             } else {
-                showTexts[2] = `Area:${results.area}px²`
+                showTexts[2] = `A:${results.area}px²`
+            }
+        }
+    }
+    if (options.diameter){
+        if (type != "line") {
+            if (options.actual) {
+                showTexts[3] = `D:${results.diameter}px ${results.actDiameter}${results.actLineUnit}`
+            } else {
+                showTexts[3] = `D:${results.diameter}px`
             }
         }
     }
@@ -265,7 +314,7 @@ const px2actLength = (px, ppi) => {
             return {number: actLength, unit: "mm"};
         } else if (actLength >= 1e-6 && actLength <= 1e-3) {
             actLength = parseFloat(Number(actLength / 1e-6).toFixed(2));
-            return {number: actLength, unit: "μm"};
+            return {number: actLength, unit: "um"};
         } else if (actLength >= 1e-9 && actLength <= 1e-6) {
             actLength = parseFloat(Number(actLength / 1e-9).toFixed(2));
             return {number: actLength, unit: "nm"};
@@ -273,7 +322,47 @@ const px2actLength = (px, ppi) => {
             return {number: actLength, unit: "m"};
         }
     } else {
-        return {number: px, unit: "px"};
+        return {number: parseFloat(Number(px).toFixed(2)), unit: "px"};
     }
 };
 
+export const unitList = ["km", "m", "dm","cm","mm", "um", "nm"];
+// 判断label text格式是否正确 如果正确返回 actLength以m为单位
+export const validateLabelText = (newLabel) =>{
+    // 提取数字和单位
+    const regexp = /(\d+\.?\d*)([a-zA-Z]+)/g;
+    const matches = [...newLabel.matchAll(regexp)];
+    console.log(matches);
+    if (matches.length==1){
+        const number = parseFloat(matches[0][1]);
+        const unit = matches[0][2];
+        if (unitList.includes(unit.toLowerCase())){
+            if (number<0){
+                return {isValidate:false, actm:"", acttext:"", msg:"Not a valid value"}
+            }
+            return {isValidate:true, actm:convert2m(number, unit), acttext:number+unit, msg:"success"}
+        }else{
+            return {isValidate:false, actm:"", acttext:"", msg:"Not a valid unit, only support km, m, dm, cm, mm, um, nm"}
+        }
+    }else {
+        return {isValidate:false, actm:"", acttext:"", msg:"Please enter a valid actual length"}
+    }
+}
+
+const convert2m = (number, unit) =>{
+    if (unit.toLowerCase()=="km"){
+        return number*1000
+    }else if (unit.toLowerCase()=="m"){
+        return number
+    }else if (unit.toLowerCase()=="dm"){
+        return number/10
+    }else if (unit.toLowerCase()=="cm"){
+        return number/100
+    }else if (unit.toLowerCase()=="mm"){
+        return number/1000
+    }else if (unit.toLowerCase()=="um"){
+        return number/1e6
+    }else if (unit.toLowerCase()=="nm"){
+        return number/1e9
+    }
+}

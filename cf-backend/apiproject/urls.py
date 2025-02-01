@@ -31,6 +31,7 @@ urlpatterns = [
     re_path(r'^fadmin/', include('apps.fadmin.urls')),
     # 自定义应用
     re_path(r'^figures/', include('apps.figures.urls')),
+    re_path(r'^measurement/', include('apps.measurement.urls')),
 ]
 
 # if settings.DEBUG:

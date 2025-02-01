@@ -139,7 +139,7 @@ another example
 dataset download link: [onedrive](https://portland-my.sharepoint.com/:u:/g/personal/shuomeng2-c_my_cityu_edu_hk/EZEbSfiIb-5Kkp0uI2aR7rEBwOX3snh6hz22eapyFlnvkg?e=Y33AFL)
 
 
-If you have any question, please email to shoumeng2-c@my.cityu.edu.hk
+If you have any question, please email to s.mengjiangnan@gamil.com
 
 
 

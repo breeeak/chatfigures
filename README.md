@@ -9,17 +9,22 @@
 Chat Figures is a full-stack project, which uses the latest deep learning technology to solve the problem of scientific image understanding.
 
 At present, the project mainly includes the following functions:
-- **Compound figure separation** - Separating the compound figure into multiple sub-figures and extracting the corresponding labels
+- **[Compound figure separation](https://www.chatfigures.com/figure-separation/)** - Separating the compound figure into multiple sub-figures and 
+extracting the corresponding labels
+- **[Interactive Measurement](https://www.chatfigures.com/interactive-measurement/)** - Recognizing scale bar and scale label to get real scale info. 
+Meanwhile, a fine-tuned SAM model aimed at microscopy images is integrated to system for convenient measurement.
 
 You can try the online demo at [https://www.chatfigures.com](https://www.chatfigures.com).
 
 # Features
 Chat Figures utilizes **Django** as the backend framework, and **Vue3** as the front-end framework. The deep learning models are most based on **ultralytics**.
-if you want to try two-stage model, you can use **openmmlab**. 
+
 ChatGPT API is also adopted in this project (under development).
 
 # Dataset
-For the dataset, please refer to [dataset](./datasets/readme.md)
+For the compound figure dataset, please refer to [compound figure dataset](./datasets/compound_figure/readme.md)
+
+For the scalebar dataset, please refer to [scale info dataset](./datasets/scalebar/readme.md)
 
 # Requirements
 - Python 3.7+
@@ -104,24 +109,24 @@ npm run build
 Then you can visit the project at [http://localhost:8080](http://localhost:8080).
 
 ### Chrome extension
-navigate to chrome://extensions/ and enable developer mode. Then click the "Load unpacked" button and select the chrome_extension folder.
+navigate to `chrome://extensions/` and enable `developer` mode. Then click the `Load unpacked` button and select the `chrome_extension` folder.
 
 
 # Getting Started
-You can just refer to help on the official website [https://www.chatfigures.com](https://www.chatfigures.com) to use the project.
+You can also refer to the help page on the official website [https://www.chatfigures.com](https://www.chatfigures.com) to learn how to use the project.
 
 We also provide a simple and easy-to-use Restful API interface, which can be used for scientific image understanding in various scenarios.
-## Compound figure separation
-
-You can upload an image in base64 format to do the compound figure separation.
+## API
+You can upload an image in base64 format to do the compound figure separation and interactive measurement.
 
 **Request Url**
 
 
-| Type   | Value                                                        |
-| ------ | ------------------------------------------------------------ |
-| Method | Post                                                         |
-| Url    | https://www.chatfigures.com/api/figures/figureSeparationUpload/ |
+| Type                              | Value                                                        |
+|-----------------------------------| ------------------------------------------------------------ |
+| Method                            | Post                                                         |
+| Url for compund figure separation | https://www.chatfigures.com/api/figures/figureSeparationUpload/ |
+| Url for Interactive measurement   | https://www.chatfigures.com/api/figures/figureSeparationUpload/ |
 
 **Request Parameters**
 
@@ -140,26 +145,21 @@ You can upload an image in base64 format to do the compound figure separation.
 | redirectUrl | string | you can view the results with this url                       |
 | token       | string | you need to request with this token as head (Authorization) for "redirectUrl" |
 
+## Visualization
+
+![compound figure separation example.jpg](.github/images/compound_figure_separation_example.jpg)
+
+![user interface](.github/images/quick_references.jpg)
+
 
 
 # Citation
 The relevant paper is under review. You can also refer to this project.
 
 # Contact
-At present, this project is almost maintained by myself and Copilot :laughing: . I know the project has a lot of problems, and there are many places that need to be improved.
+At present, this project is almost maintained by myself and Copilot :laughing: . I know this project is just like a shit, and there are many places that need to be improved.
 
-If you have any questions, please contact me by email: [shuomeng2-c@my.cityu.edu.hk](mailto:shuomeng2-c@my.cityu.edu.hk)
-
-This project will be continuously updated at least until my graduation. If you are interested in this project, you can also join me.
-
-# Donate
-If you like this project, you can buy me a cup of coffee to cover the cost of the server. :coffee:
-
-Thank you!
-
-| <img width="200" src=".github/images/bmc_qr.png" > | <img width="200" src=".github/images/wechatpay.jpg"> | <img width="200" src=".github/images/alipay.jpg"> |
-| :-------------------------------------------------: | :-------------------------------------------------: | :-----------------------------------------------: |
-| buymeacoffee | wechatpay | alipay | 
+If you have any questions, please contact me by email: [s.mengjiangnan@gamil.com](mailto:s.mengjiangnan@gamil.com)
 
 # License
 This project is released under the [Apache 2.0 license](.github/LICENSE).

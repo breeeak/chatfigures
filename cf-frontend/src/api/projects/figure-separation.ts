@@ -32,3 +32,12 @@ export function exportAllSeparations(params:any) {
         responseType: 'blob'    // 二进制流必须写明
     });
 }
+
+// 上传文件
+export function figureSeparationUpload(params:any) {
+    return request({
+        url: "/figures/figureSeparationUpload/",
+        method: "post",
+        data: params
+    });
+}

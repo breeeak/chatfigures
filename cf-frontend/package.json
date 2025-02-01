@@ -37,6 +37,7 @@
     "vuex": "^4.1.0",
     "vuex-module-decorators": "^2.0.0",
     "webpack-env": "^0.8.0",
+    "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.0/xlsx-0.20.0.tgz",
     "yup": "^0.32.11"
   },
   "devDependencies": {

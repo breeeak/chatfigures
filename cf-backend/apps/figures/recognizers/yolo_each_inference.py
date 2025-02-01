@@ -7,8 +7,8 @@ import numpy as np
 import cv2
 import os
 import math
-from apiproject.settings import DETECT_SESSION, TEXTREC_SESSION
-from apps.figures.recognizers.ultralytics.yolo_ocr.predict_ocr_each import get_bbox_result
+from apiproject.settings import DETECT_SESSION, TEXTREC_SESSION, DETECT_BAR_SESSION, TEXTREC_BAR_SESSION
+from apps.figures.recognizers.ultralytics.yolo_ocr.predict_ocr_each import get_bbox_result, get_ppi
 
 
 def backend_recognize(img_path, pred_score_thresh=0.3):
@@ -21,6 +21,19 @@ def backend_recognize(img_path, pred_score_thresh=0.3):
     result_dict["height"] = result.orig_shape[0]
     return result_dict
 
+def backend_recognize_bar(img_path, pred_score_thresh=0.3):
+    result = DETECT_BAR_SESSION.predict(img_path, conf=pred_score_thresh)[0]
+    result_dict = get_bbox_result(result, TEXTREC_BAR_SESSION, is_scale_bar=True)
+    # 如果没有figure，但是有bar和label，则计算ppi
+    if len(result_dict["figures"]) == 0 and len(result_dict["bars"]) > 0 and len(result_dict["labels"]) > 0:
+        result_dict["ppi"] = get_ppi(result_dict)
+    else:
+        result_dict["ppi"] = 0
+    result_dict["meta"] = {}
+    result_dict["name"] = os.path.basename(img_path)
+    result_dict["width"] = result.orig_shape[1]
+    result_dict["height"] = result.orig_shape[0]
+    return result_dict
 
 
 if __name__ == '__main__':

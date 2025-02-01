@@ -6,10 +6,9 @@ const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
     routes: [
         {
-            path: '/',
-            redirect: { name: 'figure-separation' }
+          path: "/",
+          redirect: {name: "home"},
         },
-
         {
             path: "/",
             component: () => import("@/views/layout/base-layout.vue"),
@@ -56,26 +55,77 @@ const router = createRouter({
                     name: "separation-results",
                     component: () =>
                         import("@/views/projects/figure-separation/separation-results.vue"),
-                },
-                {
-                    path: "figure-separation/user-guidelines",
-                    name: "separation-guidelines",
-                    component: () =>
-                        import("@/views/projects/figure-separation/user-guidelines.vue"),
-                },
-                {
-                    path: "figure-separation/extension-instructions",
-                    name: "separation-instructions",
-                    component: () =>
-                        import("@/views/projects/figure-separation/extension-instructions.vue"),
                 }
             ],
         },
-
         {
-            path: '/:pathMatch(.*)*',    // 全局404 跳转到首页 放到最后
+            path: "/",
+            component: () => import("@/views/layout/base-layout.vue"),
+            children: [
+                {
+                    path: "label-editor",
+                    name: "label-editor",
+                    component: () =>
+                        import("@/views/projects/figure-labeler/label-editor.vue"),
+                }
+            ],
+        },
+        {
+            path: "/docs",
+            component: () => import("@/views/layout/base-layout.vue"),
+            children: [
+                {
+                    path: "user-guidelines",
+                    name: "user-guidelines",
+                    component: () =>
+                        import("@/views/projects/docs/user-guidelines.vue"),
+                },
+                {
+                    path: "extension-instructions",
+                    name: "extension-instructions",
+                    component: () =>
+                        import("@/views/projects/docs/extension-instructions.vue"),
+                }
+            ],
+        },
+        {
+            path: "/",
+            component: () => import("@/views/layout/base-layout.vue"),
+            children: [
+                {
+                    path: "interactive-measurement",
+                    name: "interactive-measurement",
+                    component: () =>
+                        import("@/views/projects/interactive-measurement/interactive-measurement.vue"),
+                },
+                {
+                    path: "measurement-results/:resultId",
+                    name: "measurement-results",
+                    component: () =>
+                        import("@/views/projects/interactive-measurement/measurement-results.vue"),
+                }
+            ],
+        },
+        {
+            path: '/',
+            component: () => import("@/views/layout/base-layout.vue"),
+            children: [
+                {
+                    path: "",    // home
+                    name: "home",
+                    component: () => import("@/views/projects/home/project-home.vue"),
+                },
+                {
+                    path: "404",    // 404
+                    name: "404",
+                    component: () => import("@/views/projects/error-pages/Error404.vue"),
+                },
+            ],
+        },
+        {
+            path: '/:pathMatch(.*)*',   // 全局404 跳转到首页 放到最后
             name:"not-found",
-            redirect: { name: 'figure-separation' },
+            redirect: '/404',
         },
     ]
 })

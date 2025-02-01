@@ -29,6 +29,8 @@ COPY ./cf-backend/ .
 # install yolo_ocr
 WORKDIR /cf-backend-container/apps/figures/recognizers/ultralytics
 RUN pip install --no-cache -e .
+WORKDIR /cf-backend-container/apps/figures/recognizers/sam
+RUN pip install --no-cache -e .
 
 WORKDIR /cf-backend-container
 RUN awk 'BEGIN { cmd="cp -i ./conf/env.example.py   ./conf/env.py "; print "n" |cmd; }'

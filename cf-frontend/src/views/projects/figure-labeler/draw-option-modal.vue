@@ -33,7 +33,7 @@
             <!--begin::Description-->
             <div class="text-gray-400 fw-bold fs-5">
               If you need help, please check our
-              <router-link :to="{ name: 'user-guidelines'}" target="_blank" class="fw-bolder link-primary">User Guidelines</router-link
+              <a href="#" class="fw-bolder link-primary">User Guidelines</a
               >.
             </div>
             <!--end::Description-->
@@ -89,11 +89,11 @@
                         class="form-check-input"
                         type="checkbox"
                         value=""
-                        id="show_bars"
-                        v-model="show_bars"
+                        id="showText"
+                        v-model="show_text"
                     />
-                    <label class="form-check-label" for="show_bars"
-                    >{{ show_bars ? "Show" : "Hide" }} Bars</label
+                    <label class="form-check-label" for="showText"
+                    >{{ show_text ? "Show" : "Hide" }} Text</label
                     >
                   </div>
                   <div class="col-6 d-flex align-items-center">
@@ -127,7 +127,7 @@
                 <input type="number"  min="1" max="50" step="1"  class="form-control form-control-sm" v-model="text_size" >
               </div>
               <div class="col-6 d-flex align-items-center">
-                <input type="range" v-model="text_size" class="form-range" min="1" max="50" step="1">
+                <input type="range" v-model="text_size" class="form-range" min="1" max="100" step="1">
               </div>
             </div>
           </div>
@@ -177,7 +177,7 @@
               <input type="number"  min="1" max="50" step="1"  class="form-control form-control-sm" v-model="draw_size" >
             </div>
             <div class="col-6 d-flex align-items-center ">
-              <input type="range" v-model="draw_size" class="form-range" min="1" max="10" step="1" >
+              <input type="range" v-model="draw_size" class="form-range" min="1" max="20" step="1" >
             </div>
           </div>
         <!--end::Row-->
@@ -233,16 +233,16 @@ import {library} from '@fortawesome/fontawesome-svg-core'
 import {faXmark,faCircleInfo} from '@fortawesome/free-solid-svg-icons'
 import { ColorPicker } from "vue-color-kit";
 import "vue-color-kit/dist/vue-color-kit.css";
-
 library.add(faXmark,faCircleInfo)
+
 
 
 const show_labels = ref(true);
 const show_draws = ref(true);
-const show_bars = ref(true);
+const show_text = ref(true);
 const show_summary = ref(true);
-const text_size = ref(15);
-const draw_size = ref(2);
+const text_size = ref(30);
+const draw_size = ref(3);
 const text_color = ref("#009EF7");
 const draw_color = ref("#F43F61");
 
@@ -271,7 +271,7 @@ onMounted(()=>{
           text_color: text_color.value,
           show_labels: show_labels.value,
           show_draws: show_draws.value,
-          show_bars: show_bars.value,
+          show_text: show_text.value,
           show_summary: show_summary.value,
         });
       }

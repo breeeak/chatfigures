@@ -1,19 +1,25 @@
 
 export const toolBarIcons = [
     {
+        drawType: "anything",
+        icon: "/static/icons/abs014.svg",
+        type: "draw",
+        tips: "Measure Anything",
+    },
+    {
         drawType: "line",
         icon: "/static/icons/arr040.svg",
         type: "draw",
         tips: "Measure Distance",
     },
     {
-        drawType: "area",
+        drawType: "poly",
         icon: "/static/icons/art008.svg",
         type: "draw",
         tips: "Measure Area",
     },
     {
-        drawType: "rectangle",
+        drawType: "rect",
         icon: "/static/icons/abs010.svg",
         type: "draw",
         tips: "Draw rectangle",
@@ -88,12 +94,7 @@ export const toolBarIcons = [
         type: "func",
         tips: "Output meta info",
     },
-    {
-        drawType: "back",
-        icon: "/static/icons/arr059.svg",
-        type: "func",
-        tips: "Back to results page",
-    },
+
 ];
 
 

@@ -13,15 +13,15 @@ export interface InitOptions {
     drawWidth:number;
 }
 
-export enum StateEnum {
-    NO_STATE="no_state",
-    LINE="line",
-    POLY="poly",
-    RECT="rect",
-    CIRCLE="circle",
-    TEXT="text",
-    EDIT="edit",
-}
+// export enum StateEnum {
+//     NO_STATE="no_state",
+//     LINE="line",
+//     POLY="poly",
+//     RECT="rect",
+//     CIRCLE="circle",
+//     TEXT="text",
+//     EDIT="edit",
+// }
 export enum LabelStateEnum {
     NO_STATE="no_state",
     FIGURES="figures",
@@ -84,7 +84,7 @@ export const movingLineEndPoint = (lineGroups,moveType,newPoint,ppm) => {    // 
         x: (middleLine.get("x1") + middleLine.get("x2")) / 2,
         y: (middleLine.get("y1") + middleLine.get("y2")) / 2,
     };
-    const newTextInfo = showTextInfo(newResults,StateEnum.LINE,false);
+    const newTextInfo = showTextInfo(newResults,"line",false);
     textObj.set({ left: middlePoint.x, top: middlePoint.y,text:newTextInfo})
     if (angle > 90) {
         textObj.rotate(angle - 180);
@@ -111,7 +111,7 @@ export const getPoint = function (options, canvasId) {
     return { x: px, y: py, imageZoom: imageZoom };
 };
 // 绘制矩形
-export const drawRect = (points,options, canvas, labelId=0) => {
+export const drawRect = (points,options, canvas, labelId="rect") => {
     if (points.length==1){
         points.push(points[0]); //如果只有一个点就增加一个
     }
@@ -125,7 +125,7 @@ export const drawRect = (points,options, canvas, labelId=0) => {
 
         const obj = new fabric.Rect({
         name:"rect_"+getUUID(),
-        data:labelId,   // 根据id来找到对象
+        data:labelId,   // 对于识别类型可以根据id来找到对象  对于绘制类型是根据name来寻找的
         "left": left,
         "top": top,
         width: rec_width,
@@ -145,7 +145,7 @@ export const drawRect = (points,options, canvas, labelId=0) => {
 };
 
 // 绘制圆形
-export const drawCircle = (points,options, canvas) => {
+export const drawCircle = (points,options, canvas, labelId="circle") => {
     let cir_radius = 10;
     if(points.length==2){
         cir_radius = Math.sqrt(
@@ -155,7 +155,7 @@ export const drawCircle = (points,options, canvas) => {
     }
     const obj = new fabric.Circle({
         name: "circle_"+getUUID(),
-        data:"circle",
+        data: labelId,
         left: points[0].x,
         top: points[0].y,
         radius: cir_radius,
@@ -176,6 +176,64 @@ export const drawCircle = (points,options, canvas) => {
     canvas.add(obj);
     return obj;
 };
+// 绘制标志
+export const drawMark = (points,options, canvas, labelId="mark") => {
+    let cir_radius = 5;
+    if(points.length==2){
+        cir_radius = Math.sqrt(
+            (points[1].x - points[0].x) * (points[1].x - points[0].x) +
+            (points[1].y - points[0].y) * (points[1].y - points[0].y)
+        );
+    }
+    const obj = new fabric.Circle({
+        name: "mark_"+getUUID(),
+        data: labelId,
+        left: points[0].x,
+        top: points[0].y,
+        radius: cir_radius,
+        originX: "center",
+        originY: "center",
+        fill: options.stroke,   // 实心
+        stroke: options.stroke,
+        strokeWidth: options.strokeWidth,
+        selectable:false, //是否可被选中
+    });
+    // 只能等比例变化
+    obj.setControlsVisibility({
+        mt: false, // middle top disable
+        mb: false, // midle bottom
+        ml: false, // middle left
+        mr: false, // I think you get it
+        tl: false, // top left
+        tr: false, // top right
+        bl: false, // bottom left
+        br: false, // bottom right
+    });
+    canvas.add(obj);
+    return obj;
+};
+// 绘制polygon
+export const drawPolygon = (points,options, canvas, labelId="polygon") => {
+    // list 形式 转为 points
+    if (points.length==1){
+        return null;
+    }
+
+    const obj = new fabric.Polygon(points, {
+        name: "polygon_"+getUUID(),
+        data: labelId,
+        fill: options.stroke,
+        stroke: options.stroke,
+        originX: "center",
+        originY: "center",
+        strokeWidth: options.strokeWidth,
+        opacity: 0.5,
+        selectable: false, //是否可被选中
+    });
+    canvas.add(obj);
+    return obj;
+}
+
 
 // 绘制文本
 export const drawText = (showtext, type, points,options, canvas) => {
@@ -328,6 +386,7 @@ const changeZoomScrollOperation = (openSeadragon) => {
 export function initSeaDragon(initOptions) {
     //初始化视图
     const openSeadragon = new OpenSeadragon.Viewer({
+        crossOriginPolicy: "Anonymous",
         id: initOptions.canvasId, //指定显示的div
         //prefixUrl: "//src/assets/openseadragon/prefix/", //库中按钮等图片所在文件夹
         prefixUrl: "/static/images/openseadragon/prefix/", //库中按钮等图片所在文件夹 必须要复制到对应路径下  动态加载src 不能放在assets下 放在public下
@@ -369,20 +428,37 @@ export function initSeaDragon(initOptions) {
         constrainDuringPan: true, //(default: false)是否限制拖拽出允许显示范围
     });
     // 初始化scalebar
-    // @ts-ignore
-    openSeadragon.scalebar({
-        pixelsPerMeter: initOptions.ppm==0?1:initOptions.ppm, //设置像素与实际的比值 如果是像素对像素 或者未知即设为1
-        minWidth: "100px",
-        xOffset: 5,
-        yOffset: 10,
-        stayInsideImage: false,
-        color: "rgb(0, 0, 0)",
-        fontColor: "rgb(0, 0, 0)",
-        backgroundColor: "rgba(255, 255, 255, 0.5)",
-        fontSize: "middle",
-        barThickness: 4,
-        sizeAndTextRenderer: OpenSeadragon["ScalebarSizeAndTextRenderer"].PIXEL_LENGTH,     //单位 是像素
-    });
+    if (initOptions.ppm==0){
+        // @ts-ignore
+        openSeadragon.scalebar({
+            pixelsPerMeter: 1, //设置像素与实际的比值 如果是像素对像素 或者未知即设为1
+            minWidth: "100px",
+            xOffset: 5,
+            yOffset: 10,
+            stayInsideImage: false,
+            color: "rgb(0, 0, 0)",
+            fontColor: "rgb(0, 0, 0)",
+            backgroundColor: "rgba(255, 255, 255, 0.5)",
+            fontSize: "middle",
+            barThickness: 4,
+            sizeAndTextRenderer: OpenSeadragon["ScalebarSizeAndTextRenderer"].PIXEL_LENGTH,     //单位 是像素
+        });
+    }else{
+        // @ts-ignore
+        openSeadragon.scalebar({
+            pixelsPerMeter: initOptions.ppm, //设置像素与实际的比值 如果是像素对像素 或者未知即设为1
+            minWidth: "100px",
+            xOffset: 5,
+            yOffset: 10,
+            stayInsideImage: false,
+            color: "rgb(0, 0, 0)",
+            fontColor: "rgb(0, 0, 0)",
+            backgroundColor: "rgba(255, 255, 255, 0.5)",
+            fontSize: "middle",
+            barThickness: 4,
+            sizeAndTextRenderer: OpenSeadragon["ScalebarSizeAndTextRenderer"].METRIC_LENGTH,     //单位 是像素
+        });
+    }
 
     //初始化画板 引入fabricJs
     // initialize overlay初始化

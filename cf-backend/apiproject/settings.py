@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     # 自定义APP
     "apps.fadmin",
     'apps.figures',
+    'apps.measurement',
 ]
 
 MIDDLEWARE = [
@@ -366,11 +367,34 @@ elif INFERENCE_TYPE == "mmlab":
 elif INFERENCE_TYPE == "yolo_ocr":
     from ultralytics import YOLO
     DETECT_PTH_PATH = MEDIA_ROOT / 'models' / 'yolo_ocr' / 'yolov8l_ocr.pt'
+    DETECT_BAR_PTH_PATH = MEDIA_ROOT / 'models' / 'yolo_ocr' / 'yolov8l_ocr-bar.pt'
     DETECT_SESSION = YOLO(str(DETECT_PTH_PATH), task='ocr')
+    DETECT_BAR_SESSION = YOLO(str(DETECT_BAR_PTH_PATH), task='ocr')
+elif INFERENCE_TYPE == "yolo_ocr11":
+    from ultralytics import YOLO
+    DETECT_PTH_PATH = MEDIA_ROOT / 'models' / 'yolo_ocr' / 'yolov11_ocr.pt'
+    DETECT_BAR_PTH_PATH = MEDIA_ROOT / 'models' / 'yolo_ocr' / 'yolov11_ocr-bar.pt'
+    DETECT_SESSION = YOLO(str(DETECT_PTH_PATH), task='ocr')
+    DETECT_BAR_SESSION = YOLO(str(DETECT_BAR_PTH_PATH), task='ocr')
 elif INFERENCE_TYPE == "yolo_each":
     from ultralytics import YOLO
     from apps.figures.recognizers.ultralytics.yolo_ocr.predict_ocr_each import load_text_model
     DETECT_PTH_PATH = MEDIA_ROOT / 'models' / 'yolo_ocr' / 'yolov8l.pt'
+    DETECT_BAR_PTH_PATH = MEDIA_ROOT / 'models' / 'yolo_ocr' / 'yolov8l-bar.pt'
     DETECT_SESSION = YOLO(str(DETECT_PTH_PATH), task='detect')
+    DETECT_BAR_SESSION = YOLO(str(DETECT_BAR_PTH_PATH), task='detect')
     TEXTREC_PTH_PATH = MEDIA_ROOT / 'models' / 'yolo_ocr' / 'crnn.pth'
+    TEXTREC_BAR_PTH_PATH = MEDIA_ROOT / 'models' / 'yolo_ocr' / 'crnn-bar.pth'
     TEXTREC_SESSION = load_text_model(str(TEXTREC_PTH_PATH))
+    TEXTREC_BAR_SESSION = load_text_model(str(TEXTREC_BAR_PTH_PATH))
+
+if SAM== True:
+    from segment_anything import sam_model_registry, SamPredictor
+    import torch
+    sam_checkpoint = MEDIA_ROOT / 'models' / 'SAM' / 'sam_vit_b_01ec64.pth'
+    model_type = "vit_b"
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+    sam = sam_model_registry[model_type](checkpoint=sam_checkpoint)
+    sam.to(device=device)
+    SAM_PREDICTOR = SamPredictor(sam)
+

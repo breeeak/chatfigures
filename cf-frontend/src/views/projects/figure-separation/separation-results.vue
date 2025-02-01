@@ -25,7 +25,7 @@
         </div>
 
         <div class="d-flex flex-column justify-content-end w-100 text-center" style="height: 25%">
-          <router-link :to="{ name: 'separation-guidelines'}" class="fw-bolder link-primary mb-3">User Guidelines</router-link>
+          <router-link :to="{ name: 'user-guidelines'}" class="fw-bolder link-primary mb-3">User Guidelines</router-link>
           <!--重新计算关系-->
           <button @click="calcAllRelations" class="btn btn-sm btn-primary w-100 text-white mb-2" type="button">
             Calculate Label Relations
@@ -154,7 +154,7 @@ import {
   getFabricCanvasById,
   getPoint,
   getViewerById,
-  initSeaDragon, LabelStateEnum as StateEnum,
+  initSeaDragon,
 } from "@/core/plugins/DrawEditor/overlay";
 import DrawOptionModal from "@/views/projects/figure-separation/draw-option-modal.vue"  //不能删除
 import {downloadImgFile} from "@/core/tools/ExportUtil";
@@ -440,7 +440,7 @@ const mouseDownListener = (event) => {
     maxId.value = maxId.value + 1;  // 自增型的id
     // 每次绘制都给一个随机颜色
     drawOptions.stroke = getRandomColor(-1);
-    const rect = drawRect([point], drawOptions, overlayFabricCanvas, maxId.value);
+    const rect = drawRect([point], drawOptions, overlayFabricCanvas, maxId.value+"");
     currentDrawObject.objects.push(rect);
     currentDrawObject.points.push(point);
     isDrawing = true;
@@ -543,7 +543,7 @@ const mouseDownListener = (event) => {
   console.log(currentDrawObject)
   console.log(relations)
 }
-// 监听text修改事件，能够修改text的lablel
+// 监听text修改事件，能够修改text的label
 const editTextListener = (event) => {
   const {canvasObject,isExists}=findCanvasObjectByNameOrData(event.target.name,false)
   if (isExists){
@@ -952,40 +952,49 @@ function changeDrawType(newType: string) {
     currentToolType.value = newType;
     isActive.value = true;
   }
-  if (isActive.value && currentToolType.value != "") { // 激活任意工具改变鼠标类型
-    overlayFabricCanvas.defaultCursor = "crosshair";
-    overlayFabricCanvas.hoverCursor = "crosshair";
-  } else {
-    overlayFabricCanvas.defaultCursor = "default";
-    overlayFabricCanvas.hoverCursor = "default";
-  }
-  if (currentToolType.value == "edit" && isActive.value) { //如果是修改编辑
-    overlayFabricCanvas.defaultCursor = "crosshair";
-    overlayFabricCanvas.hoverCursor = "move";
-    // 设置所有的都可以选中
-    let allObjects = overlayFabricCanvas.getObjects();
-    for (const obj of allObjects) {
-      obj.set("selectable", true);
-      obj.setCoords(); // 必须加上它才能移动。 重新计算坐标
-    }
-  } else {  // 只要不是编辑 继承上面的默认Cursor方式
-    let allObjects = overlayFabricCanvas.getObjects();
-    for (const obj of allObjects) {
-      // obj.hoverCursor = "default";
-      obj.set("selectable", false);
-      obj.setCoords(); // 必须加上它才能移动。
-    }
-    // 取消选中当前的所有物体
-    overlayFabricCanvas.discardActiveObject();
-  }
-  console.log(currentToolType.value, isActive.value);
-  // 判断当前的状态
+  // 修改状态
   if (isActive.value) {
       currentState = currentToolType.value
   } else {
-    currentState = ""
+      currentState = ""
   }
   console.log(currentState)
+  // 不同状态 设置能否编辑 和修改指针样式
+  if (currentState == "edit") { //如果是修改编辑
+      // 设置所有的都可以选中
+      let allObjects = overlayFabricCanvas.getObjects();
+      for (const obj of allObjects) {
+          if (obj.data && (obj.data == "starts"||obj.data == "ends")) {
+              obj.hoverCursor = "pointer";  // 手指样式
+          }else {
+              obj.hoverCursor = "move";
+          }
+          obj.set("selectable", true);
+          obj.setCoords(); // 必须加上它才能移动。 重新计算坐标
+      }
+      overlayFabricCanvas.defaultCursor = "default";
+      overlayFabricCanvas.hoverCursor = "default";
+  } else if (currentState == ""){  // 如果是空的状态
+      let allObjects = overlayFabricCanvas.getObjects();
+      for (const obj of allObjects) {
+          obj.hoverCursor = "default";
+          obj.set("selectable", false);
+          obj.setCoords(); // 必须加上它才能移动。
+      }
+      overlayFabricCanvas.defaultCursor = "default";
+      overlayFabricCanvas.hoverCursor = "default";
+  }else { // 如果是绘制状态
+      let allObjects = overlayFabricCanvas.getObjects();
+      for (const obj of allObjects) {
+          obj.hoverCursor = "crosshair";
+          obj.set("selectable", false);
+          obj.setCoords(); // 必须加上它才能移动。
+      }
+      overlayFabricCanvas.defaultCursor = "crosshair";
+      overlayFabricCanvas.hoverCursor = "crosshair";
+  }
+  overlayFabricCanvas.discardActiveObject();
+  overlayFabricCanvas.renderAll();
 }
 
 // 进行不同的函数
@@ -1233,7 +1242,6 @@ const deleteByID = (id) => {
 </script>
 
 <style scoped lang="scss">
-
 #crosshair-h {
   width: 100%;
 }

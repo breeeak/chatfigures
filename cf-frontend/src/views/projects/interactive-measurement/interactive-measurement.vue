@@ -1,17 +1,17 @@
 <template>
   <!--Nav-->
-  <nav-bar/>
+  <nav-bar title="Interactive Measurement" router_name="interactive-measurement"/>
   <!--Nav-->
   <div class="container" >
     <!--begin::Hero-->
     <section id="Home">
       <div class="row">
         <div class="col-12 text-center my-5">
-          <p class="display-6 my-4">Automatic Compound Figure Separation and Label Extraction！</p>
+          <p class="display-6 my-4">Automatic Scale Information Extraction for Interactive Measurement of Scientific Images！</p>
 
           <div class="text-gray-400 fw-bold fs-5">
             No download required. Available online for any computer. If you need help, please check our
-            <router-link target="_blank" :to="{ name: 'user-guidelines'}" class="fw-bolder link-primary">User Guidelines</router-link>.
+            <router-link :to="{ name: 'user-guidelines'}" class="fw-bolder link-primary">User Guidelines</router-link>.
           </div>
         </div>
       </div>
@@ -29,7 +29,7 @@
                   @click.stop="uploadAndDetect"
               >
                <span v-if="!loading" class="indicator-label">
-                    Upload and Start Separation
+                    Upload and Start Measurement
                   </span>
                 <span v-else class="indicator-progress">
                     Please wait ...
@@ -125,7 +125,7 @@
         <div class="col-md-4 px-5 text-center">
           <!--begin::Illustration-->
           <img
-              src="/static/images/design/Figure-separation.webp"
+              src="/static/images/design/Microscopy-measurement.webp"
               class="mh-200px mb-9 rounded-3 shadow-lg"
               alt=""
           />
@@ -141,15 +141,14 @@
               <!--end::Badge-->
               <!--begin::Title-->
               <div class="fs-5 fs-lg-3 fw-bolder text-dark">
-                Figure separation with labels
+                Automatic scale bar detection
               </div>
               <!--end::Title-->
             </div>
             <!--end::Heading-->
             <!--begin::Description-->
             <div class="fw-bold fs-6 fs-lg-4 text-muted">
-              AI-based automatically separate compound figure panels as well as their corresponding
-              labels.
+              AI-based automatically scale bar detection and scale information extraction.
             </div>
             <!--end::Description-->
           </div>
@@ -175,15 +174,15 @@
               <!--end::Badge-->
               <!--begin::Title-->
               <div class="fs-5 fs-lg-3 fw-bolder text-dark">
-                Free download & export
+                Interactive Measurement
               </div>
               <!--end::Title-->
             </div>
             <!--end::Heading-->
             <!--begin::Description-->
             <div class="fw-bold fs-6 fs-lg-4 text-muted">
-              You can free download all sub figures or export json format labels.
-              The separate results can be customized by yourself.
+              Arbitrary measurement of length, area, angle, and other parameters.
+              Free download and export.
             </div>
             <!--end::Description-->
           </div>
@@ -212,7 +211,7 @@
             </a>
           </div>
           <div class="text-gray-400 fw-bold fs-5 text-center mt-2">
-            <router-link target="_blank" :to="{name:'extension-instructions'}" class="fw-bolder link-primary">Instructions</router-link
+            <router-link :to="{name:'extension-instructions'}" class="fw-bolder link-primary">Instructions</router-link
             > on how to use the extension.
           </div>
         </div>
@@ -251,7 +250,7 @@
           <!--end::Link-->
           <!--begin::Link-->
           <div class="mb-2">
-            <a href="https://portland-my.sharepoint.com/:u:/g/personal/shuomeng2-c_my_cityu_edu_hk/EZEbSfiIb-5Kkp0uI2aR7rEBwOX3snh6hz22eapyFlnvkg?e=Y33AFL" class="d-flex align-items-center" target="_blank">
+            <a href="https://portland-my.sharepoint.com/:u:/g/personal/shuomeng2-c_my_cityu_edu_hk/EUKO5hWisNdIl4YceVyujokB4_H2EVDnk29vOszn07TNXA?e=HbO0rm" class="d-flex align-items-center" target="_blank">
               <img
                   src="/static/brands/ms-onedrive-svgrepo-com.svg"
                   class="h-20px me-2 rounded"
@@ -261,7 +260,7 @@
               >Labeled Dataset on Onedrive</div>
             </a>
           </div>
-          <!--end::Link-->
+          <!--end::Link -->
         </div>
       </div>
     </section>
@@ -274,7 +273,7 @@ import {onBeforeUnmount, onMounted, ref} from "vue";
 import { useRouter } from 'vue-router'
 import {library} from '@fortawesome/fontawesome-svg-core'
 import {faXmark, faCloudUpload} from '@fortawesome/free-solid-svg-icons'
-import {getFigureSeparationUrl} from "@/api/projects/figure-separation";
+import {getDetectUrl} from "@/api/projects/interactive-measurement";
 import{getToken,setToken} from "@/core/services/JwtService";
 import NavBar from "@/components/layout/nav-bar.vue";
 // 弹窗
@@ -296,7 +295,7 @@ const uploadBtn = () => {
 
   myDropzone = new Dropzone(document.body, {
     //url: "https://lsky.mengshuo.xyz/api/upload", // Set the url for your upload script location
-    url: getFigureSeparationUrl(), // Set the url for your upload script location
+    url: getDetectUrl(), // Set the url for your upload script location
     headers: {
       "Cache-Control": "",
       "X-Requested-With": "",
@@ -334,7 +333,7 @@ const uploadBtn = () => {
       return;
     }else {
       setToken("access", response.data["token"]);
-      router.push({ name: "separation-results", params: {resultId:response.data["id"]} });
+      router.push({ name: "measurement-results", params: {resultId:response.data["id"]} });
     }
     myDropzone.destroy();  // 销毁
   });

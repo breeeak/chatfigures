@@ -1,42 +1,55 @@
 <template>
-    <nav-bar />
+<!--    <nav-bar />-->
     <div class="container">
         <div class="row">
             <div class="col-12 text-center my-5">
-                <p class="display-6 my-4">User Guidelines</p>
+                <p class="display-5 my-4">User Guidelines</p>
+            </div>
+        </div>
+        <div class="row">
+            <ul>
+                <li><a href="#figure-separation">Figure Separation Guidelines</a></li>
+                <li><a href="#interactive-measurement">Interactive Measurement Guidelines</a></li>
+            </ul>
+        </div>
+        <div class="row" id="figure-separation">
+            <div class="col-12 my-5">
+                <p class="display-6 my-4">Figure Separation Guidelines</p>
             </div>
         </div>
         <div class="row d-inline" >
             <p>
-                If you want separate compound figures on any website, you can install our chrome extension. Please refer to the <a href="/figure-separation/extension-instructions">Chrome Extension Instruction</a> for more details.
+                If you want separate compound figures on any website, you can install our chrome extension. Please refer to the <router-link :to="{name:'extension-instructions'}">Chrome Extension Instruction</router-link> for more details.
             </p>
-
         </div>
         <div class="row d-inline" >
             <h1>Getting Started</h1>
             <p>
-                1. click and choose an local image. You can also drag and drop an image to the canvas.
+                0. Go to our website for <router-link to="figure-separation">Figure Separation</router-link>.
+            </p>
+            <p>
+                1. Click and choose an local image. You can also drag and drop an image to the canvas.
             </p>
             <div class="text-center">
-                <img  class="w-50" src="/static/images/docs/upload.jpg" alt="install-chrome">
+                <img  class="w-50" src="/static/images/docs/figure-seperation/upload.jpg" alt="install-chrome">
             </div>
             <p>
                 2. Click "Upload and Start Separation". Then, separation results will be shown on a new tab.
             </p>
             <div class="text-center">
-                <img  class="w-50" src="/static/images/docs/3newtab.jpg" alt="3newtab">
+                <img  class="w-50" src="/static/images/docs/figure-seperation/3newtab.jpg" alt="3newtab">
             </div>
             <p>
                 3. You can customize the result, download each sub figure, export json format labels.
             </p>
             <div class="text-center">
-                <img  class="w-50" src="/static/images/docs/4download.jpg" alt="download">
+                <img  class="w-50" src="/static/images/docs/figure-seperation/4download.jpg" alt="download">
             </div>
         </div>
         <div class="row d-inline" >
             <h1>Quick Reference</h1>
             <div class="text-center">
-                <img  class="w-75" src="/static/images/docs/references.jpg" alt="install-chrome">
+                <img  class="w-75" src="/static/images/docs/figure-seperation/references.jpg" alt="install-chrome">
             </div>
         </div>
         <div class="row d-inline" >
@@ -123,6 +136,63 @@
             </table>
         </div>
 
+        <!--Interactive Measurement-->
+        <div class="row" id="interactive-measurement">
+            <div class="col-12 my-5">
+                <p class="display-6 my-4">Interactive Measurement Guidelines</p>
+            </div>
+        </div>
+
+        <div class="row d-inline" >
+            <h1>Getting Started</h1>
+            <p>
+                0. Go to our website for <router-link to="interactive-measurement">Interactive Measurement</router-link>.
+            </p>
+            <p>
+                1. Click and choose an local image. You can also drag and drop an image to the canvas.
+            </p>
+            <div class="text-center">
+                <img  class="w-50" src="/static/images/docs/interactive-measurements/upload.jpg" alt="install-chrome">
+            </div>
+            <p>
+                2. Click "Upload and Start Measurement". Then, scale information will be extracted on a new tab.
+            </p>
+            <div class="text-center">
+                <img  class="w-50" src="/static/images/docs/interactive-measurements/results_im.jpg" alt="3newtab">
+            </div>
+            <p>
+                3. You can customize the scale information, measurement and export json format labels.
+            </p>
+<!--            <div class="text-center">-->
+<!--                <img  class="w-50" src="/static/images/docs/interactive-measurements/quick references.jpg" alt="download">-->
+<!--            </div>-->
+        </div>
+        <div class="row d-inline" >
+            <h1>Quick Reference</h1>
+            <div class="text-center">
+                <img class="w-75" src="/static/images/docs/interactive-measurements/quick_references.jpg" alt="install-chrome">
+            </div>
+        </div>
+        <div class="row d-inline" >
+            <h1>Short Cut</h1>
+            <p>
+                1. select an object and press "ctrl + del" to delete object
+            </p>
+            <p>
+                2. press "middle mouse button" to drag viewport
+            </p>
+            <p>
+                3. press "shift + mouse wheel"to zoom in or zoom out viewport
+            </p>
+            <p>
+                4. press "esc" to cancel current draws.
+            </p>
+            <p>
+                5. press "o" to quickly close a polygon.
+            </p>
+        </div>
+
+
         <div class="row d-inline" >
             <h1>Contact</h1>
             <p>
@@ -142,6 +212,10 @@
                 Thank you!
             </p>
         </div>
+
+
+
+
         <div class="row text-center">
             <div class="col-4">
                 <img class="w-50" src="/static/images/docs/bmc_qr.png" alt="">
@@ -153,6 +227,8 @@
                 <img class="w-50" src="/static/images/docs/alipay.jpg" alt="">
             </div>
         </div>
+
+
         <div class="row text-center mb-5">
             <div class="col-4 ">
                 buymeacoffee
@@ -169,6 +245,7 @@
 
 <script setup lang="ts">
 import NavBar from "@/components/layout/nav-bar.vue";
+import InteractiveMeasurement from "@/views/projects/interactive-measurement/interactive-measurement.vue";
 </script>
 
 <style scoped>

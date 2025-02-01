@@ -17,6 +17,7 @@ from PIL import Image
 import math
 import torchvision.transforms as transforms
 import torch.nn.functional as F
+import re
 
 class NormalizePAD(object):
 
@@ -126,7 +127,7 @@ class NumpyJsonEncoder(json.JSONEncoder):
             return o.tolist()
         else:
             return super(NumpyJsonEncoder, self).default(o)
-def get_bbox_result(result, text_model=None, text_classes=None, other_classes=None):
+def get_bbox_result(result, text_model=None, text_classes=None, other_classes=None, is_scale_bar=False):
     """
     获取json格式的bbox结果 包括了figures, relations
     """
@@ -141,6 +142,14 @@ def get_bbox_result(result, text_model=None, text_classes=None, other_classes=No
     bboxes = result.boxes.data[:, :4].cpu().numpy()
     scores = result.boxes.conf.cpu().numpy()
     labels = result.boxes.cls.cpu().numpy()
+
+    if is_scale_bar:    # scale bar的类别加了2
+        bbox_result['figures'] = []
+        labels = labels + 2
+        categories_dict = {}
+        for key in result.names.keys():
+            categories_dict[key + 2] = result.names[key]
+
 
     # 获取labels中label=0的索引
     figure_index = np.where(labels == 0)[0]
@@ -188,6 +197,45 @@ def get_bbox_result(result, text_model=None, text_classes=None, other_classes=No
     bbox_result["relations"] = relations.tolist()
     return bbox_result
 
+def get_ppi(result):
+    """
+    简单获取ppi 只取第一个bar和第一个label 并且直接使用bbox的坐标计算
+    :param result: 预测结果
+    :return: ppi    pixelsPerMeter
+    """
+    unit_list = ["nm", "um", "mm", "cm", "dm", "m", "km"]
+    ppi = 0
+    # 只取第一个bar和第一个label
+    bar_len = result["bars"][0]["points"][1][0] - result["bars"][0]["points"][0][0]
+    if bar_len <= 0:
+        return ppi
+    bar_text = result["labels"][0]["text"]
+    # 正则提取单位和数字
+    pattern = re.compile(r"(\d+\.?\d*)(\D+)")
+    matchs = pattern.match(bar_text)
+    if matchs:
+        unit = matchs.group(2).lower()
+        if unit in unit_list:
+            num = float(matchs.group(1))
+            act_length = 0
+            if num > 0:
+                if unit == "nm":
+                    act_length = num / 1e9
+                elif unit == "um":
+                    act_length = num / 1e6
+                elif unit == "mm":
+                    act_length = num / 1e3
+                elif unit == "cm":
+                    act_length = num / 1e2
+                elif unit == "dm":
+                    act_length = num / 1e1
+                elif unit == "m":
+                    act_length = num / 1
+                elif unit == "km":
+                    act_length = num / 1e-3
+            if act_length > 0:
+                ppi = bar_len / act_length
+    return ppi
 
 def result2std_json(results, out_dir, origin_label_dir=None, text_model=None):
     """

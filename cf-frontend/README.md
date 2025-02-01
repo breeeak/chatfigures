@@ -44,3 +44,12 @@ npm run build
 ```sh
 npm run lint
 ```
+
+# BUGs
+## 已知
+1. 修改绘制选项后，界面不更新
+
+## 更多
+更多BUGs请联系作者
+
+# TODOs
